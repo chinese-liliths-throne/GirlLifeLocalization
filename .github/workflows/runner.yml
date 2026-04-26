@@ -1,0 +1,109 @@
+name: GirlLife Localization Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_source:
+        description: "强制重新下载源码"
+        required: false
+        default: false
+        type: boolean
+      force_paratranz:
+        description: "强制重新下载 ParaTranz 导出"
+        required: false
+        default: false
+        type: boolean
+      precheck_mode:
+        description: "预检查模式"
+        required: false
+        default: fast
+        type: choice
+        options:
+          - fast
+          - balanced
+          - strict
+  schedule:
+    - cron: "30 12 * * 1"
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  PYTHON_VERSION: "3.11"
+  PYTHONUTF8: "1"
+  PYTHONIOENCODING: "utf-8"
+  PROJECT_LANGUAGE: "zh_cn"
+  PARATRANZ_TOKEN: ${{ secrets.PARATRANZ_TOKEN }}
+  PARATRANZ_PROJECT_ID: ${{ secrets.PARATRANZ_PROJECT_ID }}
+
+jobs:
+  build:
+    name: GirlLife 打包
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: 缓存 pip
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~\AppData\Local\pip\Cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+
+      - name: 生成 ANTLR Python 解析器
+        run: |
+          python src/parser/generate_python_parser.py
+
+      - name: 执行完整本地化与打包
+        run: |
+          $args = @('main.py', '--progress', '--build-game')
+          if ('${{ github.event_name }}' -eq 'workflow_dispatch') {
+            if ('${{ inputs.force_source }}' -eq 'true') { $args += '--force-source' }
+            if ('${{ inputs.force_paratranz }}' -eq 'true') { $args += '--force-paratranz' }
+            if ('${{ inputs.precheck_mode }}' -ne '') { $args += @('--precheck-mode', '${{ inputs.precheck_mode }}') }
+          } else {
+            $args += @('--precheck-mode', 'fast')
+          }
+          python @args
+
+      - name: 上传 build 产物
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: girllife-build
+          path: |
+            build/**
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: 上传翻译后的 qsrc
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: girllife-source-translated
+          path: |
+            data/3-SourceTranslatedFile/**
+          if-no-files-found: warn
+          retention-days: 7
