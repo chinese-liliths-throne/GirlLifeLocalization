@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from src.build_service import BuildArtifact, BuildService
-from src.core.error_reporting import ErrorReporter
-from src.localization_manager import LocalizationManager, TranslationStats
-from src.core.logging import logger
-from src.paratranz_precheck import precheck_paratranz
-from src.core.paths import detect_source_root, detect_translation_root, paths
-from src.core.progress import ProgressBar
-from src.project_girl_life import ProjectGirlLife
+from src.build.service import BuildArtifact, BuildService
+from src.config.error_reporting import ErrorReporter
+from src.localization.manager import LocalizationManager, TranslationStats
+from src.config.logging import logger
+from src.localization.precheck import precheck_paratranz
+from src.config.paths import detect_source_root, detect_translation_root, paths
+from src.config.progress import ProgressBar
+from src.project.girl_life import ProjectGirlLife
 
 
 @dataclass(slots=True)

@@ -3,7 +3,7 @@ from typing import TypeVar
 
 import orjson
 
-from src.model import ParatranzData, paratranz_data_list_adapter
+from src.models import ParatranzData, paratranz_data_list_adapter
 
 
 TFile = TypeVar("TFile", bound="File")

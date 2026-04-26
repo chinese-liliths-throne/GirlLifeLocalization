@@ -5,10 +5,10 @@ from zipfile import ZipFile
 
 import httpx
 
-from src.core.configuration import settings
-from src.core.logging import logger
-from src.core.paths import paths, safe_extract_zip
-from src.core.progress import ProgressBar, extract_zip_with_progress
+from src.config.configuration import settings
+from src.config.logging import logger
+from src.config.paths import paths, safe_extract_zip
+from src.config.progress import ProgressBar, extract_zip_with_progress
 
 
 class Paratranz:

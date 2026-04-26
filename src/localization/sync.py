@@ -13,11 +13,11 @@ import orjson
 from diff_match_patch import diff_match_patch
 from thefuzz import fuzz
 
-from src.file_manager import FileManager, ParatranzDataFile
-from src.core.logging import logger
-from src.model import ParatranzData, StageEnum
-from src.core.paths import detect_source_root, detect_translation_root, paths
-from src.core.progress import ProgressBar
+from src.storage.files import FileManager, ParatranzDataFile
+from src.config.logging import logger
+from src.models import ParatranzData, StageEnum
+from src.config.paths import detect_source_root, detect_translation_root, paths
+from src.config.progress import ProgressBar
 
 
 _DISPLAY_KEYWORDS = ("msg", "*p", "*pl", "p", "pl")

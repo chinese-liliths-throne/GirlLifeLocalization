@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from src.core.paths import paths
+from src.config.paths import paths
 
 from .models import HostMode
 

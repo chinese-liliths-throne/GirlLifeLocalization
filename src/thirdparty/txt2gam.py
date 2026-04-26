@@ -55,8 +55,8 @@ if str(PROJECT_ROOT) not in sys.path:
 
 # 引入项目日志；脱离项目单独使用时回退到 loguru。
 try:
-    from src.core.error_reporting import ErrorReporter
-    from src.core.logging import logger
+    from src.config.error_reporting import ErrorReporter
+    from src.config.logging import logger
 except ModuleNotFoundError:
     ErrorReporter = Any
     from loguru import logger
@@ -1413,8 +1413,8 @@ def run_project_test_build() -> bool:
     路径约定来自 src.config.settings.filepath：
         data/test/locations -> data/test/glife.txt -> data/test/glife.qsp
     """
-    from src.core.configuration import settings
-    from src.core.logging import logger as raw_project_logger
+    from src.config.configuration import settings
+    from src.config.logging import logger as raw_project_logger
 
     filepath = settings.filepath
     # project_logger = raw_project_logger.opt(colors=True)

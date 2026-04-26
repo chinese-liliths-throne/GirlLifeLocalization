@@ -4,16 +4,16 @@ import asyncio
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
-from src.core.error_reporting import ErrorReporter
-from src.localization_manager import LocalizationManager
-from src.core.logging import logger
-from src.paratranz_precheck import precheck_paratranz
-from src.paratranz_sync import extract_paratranz_to_dir, sync_paratranz
-from src.core.paths import detect_source_root, paths
-from src.pipeline import ApplicationPipeline, PipelineOptions
+from src.config.error_reporting import ErrorReporter
+from src.localization.manager import LocalizationManager
+from src.config.logging import logger
+from src.localization.precheck import precheck_paratranz
+from src.localization.sync import extract_paratranz_to_dir, sync_paratranz
+from src.config.paths import detect_source_root, paths
+from src.build.pipeline import ApplicationPipeline, PipelineOptions
 from src.qsp_runtime import QspRuntimeRunner
 from src.qsp_runtime.build import build_qsp_runtime
-from src.qsrc_runtime_checker import test_qsrc_runtime
+from src.runtime.qsrc_checker import test_qsrc_runtime
 
 
 def build_parser() -> ArgumentParser:

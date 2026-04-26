@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 import subprocess
 
-from src.core.paths import paths
+from src.config.paths import paths
 
 from .models import HostMode
 from .workbench import launch_workbench

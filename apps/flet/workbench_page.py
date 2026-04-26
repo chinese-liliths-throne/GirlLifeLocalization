@@ -4,7 +4,7 @@ from pathlib import Path
 
 import flet as ft
 
-from src.core.paths import detect_source_root, paths
+from src.config.paths import detect_source_root, paths
 from src.qsrc import QsrcIssue
 
 from .editor import code_editor_support, create_code_editor, default_autocomplete_words

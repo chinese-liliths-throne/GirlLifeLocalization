@@ -5,10 +5,10 @@ from dataclasses import dataclass
 from difflib import unified_diff
 from pathlib import Path
 
-from src.core.error_reporting import ErrorReporter
-from src.file_manager import FileManager
-from src.core.logging import logger
-from src.core.progress import ProgressBar
+from src.config.error_reporting import ErrorReporter
+from src.storage.files import FileManager
+from src.config.logging import logger
+from src.config.progress import ProgressBar
 
 
 TOKEN_PATTERN = re.compile(r"\b(if|elseif|else|end|act|loop|while)\b", re.IGNORECASE)

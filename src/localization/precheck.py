@@ -9,13 +9,13 @@ from pathlib import Path
 
 import orjson
 
-from src.core.error_reporting import ErrorReporter
-from src.file_manager import FileManager, ParatranzDataFile
-from src.core.logging import logger
-from src.model import ParatranzData, StageEnum
-from src.paratranz_sync import QsrcLocalizationExtractor
-from src.core.paths import detect_source_root, detect_translation_root, paths
-from src.core.progress import ProgressBar
+from src.config.error_reporting import ErrorReporter
+from src.storage.files import FileManager, ParatranzDataFile
+from src.config.logging import logger
+from src.models import ParatranzData, StageEnum
+from src.localization.sync import QsrcLocalizationExtractor
+from src.config.paths import detect_source_root, detect_translation_root, paths
+from src.config.progress import ProgressBar
 
 
 TRANSLATED_STAGES = frozenset({StageEnum(1), StageEnum(3), StageEnum(5)})

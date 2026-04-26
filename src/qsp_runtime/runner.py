@@ -5,7 +5,7 @@ import platform
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from src.core.paths import paths
+from src.config.paths import paths
 
 from .ffi import QspRuntimeBindings, load_qsp_runtime
 

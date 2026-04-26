@@ -5,9 +5,7 @@ description = "Girl Life / QSP 中文本地化流水线工具。"
 requires-python = ">=3.11"
 dependencies = [
     "aiofiles>=25.1.0",
-    "antlr4-python3-runtime>=4.13.2",
     "diff-match-patch>=20241021",
-    "django-emoji>=2.2.2",
     "flet>=0.28.3",
     "flet-code-editor>=0.28.3",
     "httpx>=0.28.1",
