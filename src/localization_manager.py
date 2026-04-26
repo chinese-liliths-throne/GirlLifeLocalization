@@ -9,12 +9,12 @@ from pathlib import Path
 
 import aiofiles
 
-from src.error_reporter import ErrorReporter
+from src.core.error_reporting import ErrorReporter
 from src.file_manager import FileManager, ParatranzDataFile
-from src.log import logger
+from src.core.logging import logger
 from src.model import StageEnum
-from src.paths import detect_source_root, detect_translation_root, paths
-from src.progress import ProgressBar
+from src.core.paths import detect_source_root, detect_translation_root, paths
+from src.core.progress import ProgressBar
 from src.qsrc_guard import QsrcBuildGuard
 from src.qsrc_runtime_checker import QsrcRuntimeChecker, QsrcRuntimeStats
 

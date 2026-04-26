@@ -1,100 +1,138 @@
-# 项目结构规划
+# 项目结构
 
-本项目的结构目标是：入口薄、路径统一、业务分层、插件隔离、中文可读。
+当前目录结构已经按“入口层 / 共享核心层 / 数据层”拆开。
 
-## 分层说明
-
-```text
-main.py
-└── src.cli
-    └── src.pipeline
-        ├── src.project_girl_life
-        ├── src.paratranz
-        ├── src.localization_manager
-        ├── src.build_service
-        └── src.thirdparty.txt2gam
-```
-
-### 入口层
-
-- `main.py`: 只负责调用 `src.cli.main()`。
-- `src/cli.py`: 负责中文命令行参数解析，不写业务细节。
-
-### 编排层
-
-- `src/pipeline.py`: 串联下载源码、下载翻译、注入译文、可选打包。
-- 编排层只决定“先做什么、后做什么”，不处理具体文件格式。
-
-### 构建服务层
-
-- `src/build_service.py`: 负责第 4 步打包源码合成、本体 qsp 打包、`mods` 目录下 mod qproj 自动发现与打包。
-- 默认输出本体到 `build/glife.qsp`，输出 mod 到 `build/mods/<Mod名>/<qproj名>.qsp`。
-- 每次打包前会先清空整个 `build/` 目录，再重新生成新的产物和错误归档。
-
-### 基础设施层
-
-- `src/paths.py`: 唯一路径规划入口，包含目录识别、安全删除、安全解压。
-- `src/config.py`: 从 `.env` 读取配置。
-- `src/log.py`: 日志输出。
-- `src/consts.py`: 上游仓库 URL 与平台常量。
-
-### 业务层
-
-- `src/project_girl_life.py`: Girl Life 源码下载与解压。
-- `src/paratranz.py`: ParaTranz API 调用。
-- `src/localization_manager.py`: ParaTranz JSON 到 `.qsrc` 的译文注入。
-- `src/paratranz_sync.py`: 从源码重新提取 ParaTranz 词条，并把旧版本 JSON 中可复用的翻译迁移到新版本。
-- `src/file_manager.py`: 文件扫描和 JSON 读取。
-- `src/model/`: ParaTranz 数据模型。
-
-### 插件层
-
-- `src/thirdparty/txt2gam.py`: QSP 语法检查、qproj/qsrc 合并、qsp/gam 打包。
-- `src/thirdparty/txt2gam_usage.md`: 插件中文说明。
-
-## 输出目录约定
+## 顶层职责
 
 ```text
-data/1-SourceFile
+main.py        -> CLI 启动壳
+flet_main.py   -> Flet 工作台启动壳
+apps/          -> 各宿主入口层
+src/           -> 共享核心库
+data/          -> 源码、翻译、中间产物
+build/         -> 最终打包产物与错误归档
+docs/          -> 规划与参考文档
 ```
 
-保存下载并解压后的 Girl Life 源码。
+## `apps/`
 
-```text
-data/2-TranslatedParatranzFile
-```
+### `apps/cli/`
 
-保存 ParaTranz 的 UTF-8 导出包内容。
-也可以作为版本升级后的迁移输出目录，额外生成 `_sync_report.json` 记录新增、迁移和移除的词条，并把被移除的旧词条统一放到 `obsolete/` 目录。
+只负责：
 
-```text
-data/3-SourceTranslatedFile
-```
+- 解析参数
+- 选择命令
+- 调用核心流程
+- 输出 CLI 结果
 
-只保存替换好的 `.qsrc` 文件。这里是翻译增量目录，不保存 README、构建脚本、工具文件或其它原始源码附属文件。
+不负责：
 
-```text
-data/4-BuildSource
-```
+- 具体本地化实现
+- 构建实现
+- parser / runtime 细节
 
-第 4 步最终打包源码。打包前会先复制 `data/1-SourceFile` 检测到的源码根目录，再用 `data/3-SourceTranslatedFile` 覆盖同名 `.qsrc` 文件，确保最终打包输入同时包含完整原始项目结构和最新译文。
+### `apps/flet/`
 
-```text
-build
-```
+负责：
 
-保存最终打包产物。默认完整流水线会生成：
+- Flet 工作台启动
+- 页面、状态、宿主适配
+- 把 UI 事件转发给核心服务
 
-- `build/glife.txt`: `txt2gam` 合并 `.qproj` / `.qsrc` 后得到的中间文本。
-- `build/glife.qsp`: 最终可运行的 QSP 游戏文件。
-- `build/mods/<Mod名>/<qproj名>.txt`: mod 合并后的中间文本。
-- `build/mods/<Mod名>/<qproj名>.qsp`: 最终可运行的 mod QSP 文件。
-- `build/errors/translation/...`: 翻译回写错误，按 `.qsrc` 文件归档。
-- `build/errors/paratranz-json/...`: ParaTranz JSON 读取/解析错误，按 `.json` 文件归档。
-- `build/errors/build-syntax/...`: 打包语法检查错误，按 `.qsrc` 或合并后的 `.txt` 文件归档。
-- `build/errors/build-merge/...`: qproj 合并、缺文件、读写失败等错误，按对应源文件归档。
+不负责：
 
-## 兼容说明
+- 自己实现本地化、构建、运行时逻辑
+- 直接重写 parser / validator
 
-- `src/model/ParatranzData.py` 保留为兼容导入，新的规范文件是 `src/model/paratranz_data.py`。
-- `src/old_replacer.py` 是旧版 Twine 流程遗留模块，现在只保留明确的弃用提示。
+## `src/`
+
+### `src/core/`
+
+共享核心层，当前主要包含：
+
+- `configuration.py`：配置读取
+- `paths.py`：路径规划与安全校验
+- `logging.py`：统一日志
+- `error_reporting.py`：错误归档
+- `progress.py`：进度条与文件级进度工具
+- `constants.py`：上游仓库与平台常量
+- `build.py / project.py / editor.py / runtime.py / localization.py`：核心服务包装层
+
+### 仍在 `src/` 顶层、待继续收拢的核心模块
+
+- `build_service.py`
+- `pipeline.py`
+- `project_girl_life.py`
+- `paratranz.py`
+- `paratranz_precheck.py`
+- `paratranz_sync.py`
+- `localization_manager.py`
+- `qsrc_guard.py`
+- `qsrc_runtime_checker.py`
+- `file_manager.py`
+
+这些模块已经不再属于 CLI/Flet 入口层，但还没有全部物理下沉到 `src/core/*` 子包；后续重构会继续把它们按职责拆分。
+
+### `src/qsrc/`
+
+QSRC 相关静态分析主链：
+
+- preprocess
+- parser
+- AST / transform
+- lint passes
+
+### `src/qsp_runtime/`
+
+QSP runtime bridge 与运行时检查支持。
+
+### `src/model/`
+
+ParaTranz 与共享数据模型。
+
+### `src/thirdparty/`
+
+第三方整合代码，当前主要是 `txt2gam`。
+
+## 数据与产物目录
+
+### `data/1-SourceFile/`
+原始 Girl Life 源码目录。
+
+### `data/2-TranslatedParatranzFile/`
+ParaTranz 导出与同步结果目录，包含：
+
+- 正常 `.json`
+- `obsolete/`
+- `_sync_report.json`
+
+### `data/3-SourceTranslatedFile/`
+只保留替换后的 `.qsrc` 文件。
+
+### `data/4-BuildSource/`
+最终打包前的完整源码树：
+
+- 先复制原始源码
+- 再用第 3 步结果覆盖同名 `.qsrc`
+
+### `build/`
+
+最终打包输出，包括：
+
+- `build/glife.qsp`
+- `build/mods/...`
+- `build/errors/...`
+
+## 当前重构边界
+
+已经完成：
+
+- CLI 与 Flet 入口从 `src/` 中抽离
+- 基础设施模块下沉到 `src/core/`
+- `main.py / flet_main.py / pyproject` 对齐新入口
+
+下一步重点：
+
+- 继续把 `src` 顶层业务模块下沉到 `src/core/*`
+- 清理历史乱码与旧说明
+- 更新 workflow 和更多文档到新结构

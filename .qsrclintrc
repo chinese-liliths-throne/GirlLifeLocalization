@@ -1,0 +1,7 @@
+{
+  "disabled_rules": [],
+  "warning_as_error": false,
+  "max_line_length": 180,
+  "enable_project_style_passes": true,
+  "enable_runtime_bridge_checks": false
+}

@@ -4,17 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       force_source:
-        description: "强制重新下载源码"
+        description: Force refresh source archive
         required: false
         default: false
         type: boolean
       force_paratranz:
-        description: "强制重新下载 ParaTranz 导出"
+        description: Force refresh ParaTranz export
         required: false
         default: false
         type: boolean
       precheck_mode:
-        description: "预检查模式"
+        description: Precheck mode
         required: false
         default: fast
         type: choice
@@ -41,34 +41,30 @@ env:
 
 jobs:
   build:
-    name: GirlLife 打包
+    name: GirlLife Build
     runs-on: windows-latest
     defaults:
       run:
         shell: pwsh
 
     steps:
-      - name: 检出仓库
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           lfs: true
 
-      - name: 设置 Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
           cache: pip
 
-      - name: 安装依赖
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install aiofiles antlr4-python3-runtime diff-match-patch django-emoji httpx loguru orjson pydantic pydantic-settings python-dotenv thefuzz tqdm
+          python -m pip install .
 
-      - name: 生成 ANTLR Python 解析器
-        run: |
-          python src/parser/generate_python_parser.py
-
-      - name: 执行完整本地化与打包
+      - name: Run localization pipeline
         env:
           INPUT_FORCE_SOURCE: ${{ inputs.force_source }}
           INPUT_FORCE_PARATRANZ: ${{ inputs.force_paratranz }}
@@ -94,7 +90,7 @@ jobs:
 
           python @args
 
-      - name: 上传 build 产物
+      - name: Upload build artifacts
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
@@ -103,7 +99,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      - name: 上传翻译后的 qsrc
+      - name: Upload translated qsrc
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:

@@ -2,11 +2,11 @@ import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from src.error_reporter import ErrorReporter
+from src.core.error_reporting import ErrorReporter
 from src.file_manager import FileManager
-from src.log import logger
-from src.paths import detect_source_root, paths
-from src.progress import ProgressBar, copy_tree_with_progress
+from src.core.logging import logger
+from src.core.paths import detect_source_root, paths
+from src.core.progress import ProgressBar, copy_tree_with_progress
 from src.qsrc_guard import QsrcBuildGuard
 from src.qsrc_runtime_checker import QsrcRuntimeChecker
 from src.thirdparty.txt2gam import build_qproj_to_gam

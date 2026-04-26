@@ -5,16 +5,16 @@ from zipfile import ZipFile
 import httpx
 from aiofiles import open as aopen
 
-from src.config import settings
-from src.consts import (
+from src.core.configuration import settings
+from src.core.constants import (
     REPOSITORY_TAGS_URL_COMMON,
     REPOSITORY_ZIP_URL_COMMON,
     REPOSITORY_ZIP_URL_DEV,
 )
-from src.log import logger
+from src.core.logging import logger
 from src.paratranz import Paratranz
-from src.paths import paths, safe_extract_zip
-from src.progress import ProgressBar, extract_zip_with_progress
+from src.core.paths import paths, safe_extract_zip
+from src.core.progress import ProgressBar, extract_zip_with_progress
 
 
 class ProjectGirlLife:

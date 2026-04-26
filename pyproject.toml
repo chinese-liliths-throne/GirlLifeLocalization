@@ -8,7 +8,10 @@ dependencies = [
     "antlr4-python3-runtime>=4.13.2",
     "diff-match-patch>=20241021",
     "django-emoji>=2.2.2",
+    "flet>=0.28.3",
+    "flet-code-editor>=0.28.3",
     "httpx>=0.28.1",
+    "lark>=1.2.2",
     "loguru>=0.7.3",
     "orjson>=3.11.8",
     "pydantic>=2.13.3",
@@ -19,7 +22,8 @@ dependencies = [
 ]
 
 [project.scripts]
-girllife-localization = "src.cli:main"
+girllife-localization = "apps.cli.main:main"
+girllife-localization-flet = "apps.flet.main:main"
 
 [project.optional-dependencies]
 dev = [
@@ -45,4 +49,4 @@ select = ["E", "F", "I", "UP", "B"]
 ignore = ["E501"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["src"]
+known-first-party = ["src", "apps"]

@@ -2,12 +2,12 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from src.build_service import BuildArtifact, BuildService
-from src.error_reporter import ErrorReporter
+from src.core.error_reporting import ErrorReporter
 from src.localization_manager import LocalizationManager, TranslationStats
-from src.log import logger
+from src.core.logging import logger
 from src.paratranz_precheck import precheck_paratranz
-from src.paths import detect_source_root, detect_translation_root, paths
-from src.progress import ProgressBar
+from src.core.paths import detect_source_root, detect_translation_root, paths
+from src.core.progress import ProgressBar
 from src.project_girl_life import ProjectGirlLife
 
 
